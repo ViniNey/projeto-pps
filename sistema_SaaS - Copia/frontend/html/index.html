@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cardápio Online</title>
+
+    <link rel="stylesheet" href="../css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="topbar-row topbar-head">
+          <div class="brand-wrap">
+            <!-- <div class="brand-mark">S</div> -->
+            <div class="brand-marquee">
+              <div class="marquee">
+                <h2 id="logo-estabelecimento">Carregando...</h2>
+                <h2 class="marquee-copy" aria-hidden="true"
+                  >Carregando...</h2
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="topbar-right">
+            <div class="status-loja" id="status-loja">Carregando status...</div>
+            <div class="top-actions">
+            <button
+              id="searchButton"
+              class="icon-btn search-btn"
+              aria-label="Buscar"
+            >
+              <i class="fas fa-search"></i>
+            </button>
+            <button
+              id="categoryToggle"
+              class="icon-btn category-toggle"
+              onclick="toggleCategoryMenu()"
+              aria-expanded="false"
+              aria-label="Abrir categorias"
+            >
+              <i class="fas fa-bars"></i>
+            </button>
+
+            <button
+              id="btn-ver-pedido"
+              class="icon-btn cart-btn"
+              onclick="abrirModalPedido()"
+              style="display: none"
+              aria-label="Abrir carrinho"
+            >
+              <i class="fas fa-shopping-cart"></i>
+              <span id="contador-carrinho" class="cart-badge">0</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <div id="buscaContainer" class="busca-container" style="display: none">
+        <div class="search-card">
+          <i class="fas fa-search"></i>
+          <input
+            id="campoBusca"
+            class="campo-busca"
+            type="search"
+            placeholder="Buscar produtos..."
+            oninput="filtrarCardapio()"
+          />
+        </div>
+      </div>
+
+      <div class="category-menu">
+        <div class="menu-tabs" id="menuTabs">
+          <button class="menu-tab active" onclick="focarCategoria('Todos')">
+            Todos
+          </button>
+          <button class="menu-tab" onclick="focarCategoria('Lanches')">
+            Lanches
+          </button>
+          <button class="menu-tab" onclick="focarCategoria('Porções')">
+            Porções
+          </button>
+          <button class="menu-tab" onclick="focarCategoria('Bebidas')">
+            Bebidas
+          </button>
+          <button class="menu-tab" onclick="focarCategoria('Ajuda')">
+            Ajuda
+          </button>
+        </div>
+      </div>
+
+      <section class="hero-section" id="home">
+        <div class="hero-copy">
+          <h2 id="establishment-title">Carregando...</h2>
+          <p class="hero-subtitle">
+            Explore as melhores opções do dia, escolha seus pratos favoritos e
+            finalize o pedido em poucos cliques.
+          </p>
+          <div class="hero-badges">
+            <span class="info-pill"
+              ><i class="fas fa-bolt"></i> Rápido &amp; Fácil</span
+            >
+            <span class="info-pill"
+              ><i class="fas fa-star"></i> Mais pedidos hoje</span
+            >
+          </div>
+        </div>
+
+        <div class="hero-banner">
+          <img id="banner-estabelecimento" alt="Banner do estabelecimento" />
+        </div>
+      </section>
+
+      <section class="section section-menu" id="lista-produtos"></section>
+
+      <footer id="contatos" class="footer-shell">
+        <div class="footer-content">
+          <div>
+            <p class="footer-label">Contato</p>
+            <p id="footer-contact-text">
+              Entre em contato e faça seu pedido direto pelo WhatsApp.
+            </p>
+            <a
+              id="link-whatsapp"
+              href="#"
+              target="_blank"
+              class="whatsapp-link"
+            >
+              <i class="fab fa-whatsapp"></i> WhatsApp
+            </a>
+          </div>
+          <div>
+            <p class="footer-label">Estabelecimento</p>
+            <p id="footer-estab-name">Nome do estabelecimento</p>
+            <p id="footer-phone">Telefone</p>
+          </div>
+        </div>
+        <p class="footer-copy">
+          &copy; <span id="ano"></span> Todos os direitos reservados.
+        </p>
+      </footer>
+    </div>
+
+    <div id="modalPedido" class="modal">
+      <div class="modal-content modal-card">
+        <h3>Seu Pedido</h3>
+        <ul id="listaPedido" class="pedido-list"></ul>
+        <p class="total">
+          Total: <strong>R$ <span id="totalPedidoModal">0,00</span></strong>
+        </p>
+        <div class="modal-buttons modal-actions">
+          <button class="secondary-btn" onclick="fecharModalPedido()">
+            Fechar
+          </button>
+          <button
+            class="primary-btn"
+            id="btn-finalizar"
+            onclick="finalizarPedido()"
+          >
+            Finalizar Pedido
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="modalPagamento" class="modal">
+      <div class="modal-content modal-card">
+        <p class="total">
+          Total do Pedido:
+          <strong>R$ <span id="totalPagamento">0,00</span></strong>
+        </p>
+        <h3>Escolha forma de pagamento</h3>
+        <div class="modal-buttons">
+          <button onclick="selecionarPagamento('Dinheiro')">Dinheiro</button>
+          <button onclick="selecionarPagamento('Pix')">Pix</button>
+          <button onclick="selecionarPagamento('Cartão')">Cartão</button>
+        </div>
+        <button class="btn-close" onclick="fecharModalPagamento()">
+          Fechar
+        </button>
+      </div>
+    </div>
+
+    <div id="modalConfirmacao" class="modal">
+      <div class="modal-content modal-card">
+        <h3>Confirme seus dados</h3>
+        <input
+          type="text"
+          id="inputNomeCliente"
+          placeholder="Nome do cliente"
+        />
+        <input type="text" id="inputMesa" placeholder="Número da mesa" />
+        <textarea
+          id="inputEndereco"
+          placeholder="Endereço para entrega"
+        ></textarea>
+        <div class="modal-buttons">
+          <button onclick="enviarPedido('Mesa')">Mesa</button>
+          <button onclick="enviarPedido('Entrega')">Entrega</button>
+          <button onclick="enviarPedido('Retirada')">Retirada</button>
+        </div>
+        <button class="btn-close" onclick="fecharModalMesa()">Fechar</button>
+      </div>
+    </div>
+
+    <button id="btnScrool" class="scroll-top" title="Voltar ao topo">↑</button>
+
+    <div id="toast" class="toast">
+      <div class="toast-icon"><i class="fas fa-check"></i></div>
+      <div>
+        <div class="toast-title">Sucesso</div>
+        <div class="toast-message">Mensagem</div>
+      </div>
+      <span class="toast-close" onclick="closeToast()">×</span>
+
+      <div class="toast-progress"></div>
+    </div>
+
+    <script src="../js/script.js"></script>
+  </body>
+</html>
