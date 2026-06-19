@@ -1,0 +1,41 @@
+﻿/* CARDS */
+.panel-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.18);
+  padding: 26px;
+  display: grid;
+  gap: 18px;
+}
+
+.full-card {
+  min-height: 520px;
+}
+
+.card-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.card-head h2 {
+  margin: 0 0 8px;
+}
+
+.card-head p,
+.panel-card p {
+  margin: 0;
+  color: rgba(238, 242, 255, 0.72);
+}
+
+.empty-state {
+  padding: 24px;
+  text-align: center;
+  color: rgba(238, 242, 255, 0.72);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(238, 242, 255, 0.18);
+  border-radius: 20px;
+}

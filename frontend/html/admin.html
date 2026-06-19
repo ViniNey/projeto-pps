@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel Admin</title>
+    <link rel="stylesheet" href="../css/admin/admin.css" />
+  </head>
+  <body>
+    <div class="admin-shell">
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <span class="brand-icon" id="brandIcon">B</span>
+          <div>
+            <strong id="sidebarEstablishmentName">Carregando...</strong>
+            <small>Painel Administrativo</small>
+          </div>
+          <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+        </div>
+
+        <nav class="sidebar-nav">
+          <button
+            class="sidebar-link active"
+            onclick="setActiveMenu(this)"
+            data-menu="Pedidos"
+          >
+            Pedidos
+            <span id="badgePedidos" class="badge hidden">!</span>
+          </button>
+          <button
+            class="sidebar-link"
+            onclick="
+              setActiveMenu(this);
+              closeSidebar();
+            "
+            data-menu="Produtos"
+          >
+            Produtos
+          </button>
+          <button
+            class="sidebar-link"
+            onclick="
+              setActiveMenu(this);
+              closeSidebar();
+            "
+            data-menu="Histórico"
+          >
+            Histórico
+          </button>
+          <button
+            class="sidebar-link"
+            onclick="
+              setActiveMenu(this);
+              carregarPedidosArquivados();
+              closeSidebar();
+            "
+            data-menu="Pedidos Arquivados"
+          >
+            Pedidos Arquivados
+          </button>
+          <button
+            class="sidebar-link"
+            onclick="
+              setActiveMenu(this);
+              abrirModal('produto');
+              closeSidebar();
+            "
+          >
+            Cadastrar produto
+          </button>
+          <button
+            class="sidebar-link"
+            onclick="
+              setActiveMenu(this);
+              abrirModal('horarios');
+              carregarHorarios();
+              closeSidebar();
+            "
+            data-menu="Horários"
+          >
+            Horários
+          </button>
+          <button
+            class="sidebar-link"
+            onclick="
+              setActiveMenu(this);
+              abrirModal('banner');
+              closeSidebar();
+            "
+            data-menu="Banner"
+          >
+            Banner
+          </button>
+          <button
+            class="sidebar-link"
+            onclick="
+              setActiveMenu(this);
+              abrirModal('dados');
+              closeSidebar();
+            "
+          >
+            Dados da loja
+          </button>
+          <button
+            class="sidebar-link"
+            onclick="
+              setActiveMenu(this);
+              closeSidebar();
+            "
+            data-menu="Faturamento"
+          >
+            Faturamento
+          </button>
+          <button
+            class="sidebar-link"
+            onclick="
+              setActiveMenu(this);
+              closeSidebar();
+            "
+            data-menu="Ajuda"
+          >
+            Ajuda
+          </button>
+          <button class="sidebar-link" onclick="logout()">Sair</button>
+        </nav>
+
+        <div class="sidebar-footer">
+          <p>
+            Use o botão de cada seção para abrir o formulário em modal e manter
+            os produtos visíveis na tela.
+          </p>
+        </div>
+      </aside>
+
+      <main class="main-panel">
+        <header class="main-header">
+          <div id="establishmentHeader" class="establishment-header">
+            <h1 id="establishmentName">Carregando...</h1>
+            <div class="faturamento-container">
+              <span class="faturamento-label">Faturamento do hoje:</span>
+              <span id="mediaFaturamento" class="faturamento-badge"
+                >R$ 0,00</span
+              >
+            </div>
+          </div>
+          <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+        </header>
+
+        <section class="section-grid">
+          <div class="panel-card full-card">
+            <div class="card-head">
+              <div>
+                <h2 id="tituloSecao">Pedidos pendentes</h2>
+                <p id="card-head-p">
+                  Visualize e finalize pedidos feitos pelos clientes. Gerencie
+                  os pedidos em tempo real.
+                </p>
+              </div>
+            </div>
+            <div id="listarPedidos" class="produtos-list"></div>
+          </div>
+
+          <div class="panel-card info-card">
+            <h3>Link da loja</h3>
+            <p>Copie o link da sua página para compartilhar com clientes.</p>
+            <div class="box-url">
+              <input type="text" id="urlLoja" readonly />
+              <button class="copy-btn" onclick="copiarURL()">
+                Copiar link
+              </button>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div
+      id="modalProduto"
+      class="modal"
+      onclick="fecharModal(event, 'modalProduto')"
+    >
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <div>
+            <h3 id="produtoModalTitle">Cadastrar Produto</h3>
+            <p>
+              Preencha as informações do produto para adicionar ao cardápio.
+            </p>
+          </div>
+          <button
+            class="close-modal"
+            onclick="fecharModal(null, 'modalProduto')"
+          >
+            ×
+          </button>
+        </div>
+        <div class="modal-body">
+          <label>Nome do produto</label>
+          <input id="nome" placeholder="Nome do produto" />
+          <label>Descrição</label>
+          <input id="descricao" placeholder="Descrição" />
+          <label>Categoria</label>
+          <input id="categoria" placeholder="Categoria" />
+          <label>Preço</label>
+          <input id="preco" placeholder="Preço" />
+          <div class="switch-group">
+            <label>Produto com controle de estoque?</label>
+
+            <label class="switch">
+              <input type="checkbox" id="controlaEstoque" />
+              <span class="slider"></span>
+            </label>
+          </div>
+          <input id="estoque" placeholder="Estoque" />
+          <label>Imagem</label>
+          <input type="file" id="imagem" accept="image/*" />
+          <input type="hidden" id="editImagemAtual" />
+        </div>
+        <div class="modal-footer">
+          <button
+            class="secondary-btn"
+            onclick="fecharModal(null, 'modalProduto')"
+          >
+            Cancelar
+          </button>
+          <button class="primary-btn" onclick="salvarProdutoModal()">
+            Salvar produto
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="modalHorarios"
+      class="modal"
+      onclick="fecharModal(event, 'modalHorarios')"
+    >
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <div>
+            <h3>Horários de funcionamento</h3>
+            <p>Defina horários e dias em que a loja permanece aberta.</p>
+          </div>
+          <button
+            class="close-modal"
+            onclick="fecharModal(null, 'modalHorarios')"
+          >
+            ×
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="dias-semana">
+            <label><input type="checkbox" value="segunda" /> Seg</label>
+            <label><input type="checkbox" value="terca" /> Ter</label>
+            <label><input type="checkbox" value="quarta" /> Qua</label>
+            <label><input type="checkbox" value="quinta" /> Qui</label>
+            <label><input type="checkbox" value="sexta" /> Sex</label>
+            <label><input type="checkbox" value="sabado" /> Sab</label>
+            <label><input type="checkbox" value="domingo" /> Dom</label>
+          </div>
+          <div class="horario-config">
+            <div>
+              <label>Abertura</label>
+              <input type="time" id="abertura-global" />
+            </div>
+            <div>
+              <label>Fechamento</label>
+              <input type="time" id="fechamento-global" />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            class="secondary-btn"
+            onclick="fecharModal(null, 'modalHorarios')"
+          >
+            Cancelar
+          </button>
+          <button class="primary-btn" onclick="aplicarHorarios()">
+            Aplicar e salvar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="modalBanner"
+      class="modal"
+      onclick="fecharModal(event, 'modalBanner')"
+    >
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <div>
+            <h3>Atualizar banner</h3>
+            <p>Envie uma imagem para o banner do estabelecimento.</p>
+          </div>
+          <button
+            class="close-modal"
+            onclick="fecharModal(null, 'modalBanner')"
+          >
+            ×
+          </button>
+        </div>
+        <div class="modal-body">
+          <label>Banner do estabelecimento</label>
+          <input type="file" id="inputBanner" accept="image/*" />
+        </div>
+        <div class="modal-footer">
+          <button
+            class="secondary-btn"
+            onclick="fecharModal(null, 'modalBanner')"
+          >
+            Cancelar
+          </button>
+          <button class="primary-btn" onclick="enviarBanner()">
+            Enviar Banner
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="modalDados"
+      class="modal"
+      onclick="fecharModal(event, 'modalDados')"
+    >
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <div>
+            <h3>Dados da loja</h3>
+            <p>Atualize contato e chave pix do estabelecimento.</p>
+          </div>
+          <button class="close-modal" onclick="fecharModal(null, 'modalDados')">
+            ×
+          </button>
+        </div>
+        <div class="modal-body">
+          <label>Telefone (WhatsApp)</label>
+          <input type="text" id="inputTelefone" placeholder="44999999999" />
+        </div>
+        <div class="modal-footer">
+          <button
+            class="secondary-btn"
+            onclick="fecharModal(null, 'modalDados')"
+          >
+            Cancelar
+          </button>
+          <button class="primary-btn" onclick="salvarDados()">
+            Salvar dados
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="loading" class="loading-overlay">
+      <div class="spinner"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" src="../js/admin.js"></script>
+  </body>
+</html>
